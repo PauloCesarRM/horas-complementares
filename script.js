@@ -1,6 +1,3 @@
-// script.js
-
-// Dados das atividades com base no PDF
 const atividades = {
     ensino: [
         { nome: "Estágio Extracurricular", aproveitamento: 0.7, limite: 40 },
@@ -36,7 +33,18 @@ const atividades = {
 
 // Variáveis globais para armazenar os dados
 let totalHorasPorCategoria = { ensino: 0, extensao: 0, pesquisa: 0 };
-let atividadesAdicionadas = [];
+let totalHorasPorTipoAtividade = {}; // Armazena o total de horas por tipo de atividade
+
+// Função para inicializar o objeto de horas por tipo de atividade
+function inicializarHorasPorTipoAtividade() {
+    for (const categoria in atividades) {
+        totalHorasPorTipoAtividade[categoria] = {};
+        atividades[categoria].forEach(ativ => {
+            totalHorasPorTipoAtividade[categoria][ativ.nome] = 0;
+        });
+    }
+}
+inicializarHorasPorTipoAtividade();
 
 // Função para carregar tipos de atividade dinamicamente
 function carregarTiposAtividade(categoria) {
@@ -103,22 +111,33 @@ function adicionarAtividade() {
     // Calcula horas aproveitadas
     const horasAproveitadas = Math.min(horasDedicadas * atividadeSelecionada.aproveitamento, atividadeSelecionada.limite);
 
+    // Verifica se o limite de horas para o tipo de atividade já foi atingido
+    if (totalHorasPorTipoAtividade[categoria][tipoAtividade] >= atividadeSelecionada.limite) {
+        alert(`Limite máximo de ${atividadeSelecionada.limite} horas para "${tipoAtividade}" já foi atingido.`);
+        return;
+    }
+
+    // Calcula o saldo restante para o tipo de atividade
+    const saldoRestante = atividadeSelecionada.limite - totalHorasPorTipoAtividade[categoria][tipoAtividade];
+    const horasAproveitadasFinais = Math.min(horasAproveitadas, saldoRestante);
+
     // Atualiza total de horas por categoria
-    if (totalHorasPorCategoria[categoria] + horasAproveitadas > 90) {
+    if (totalHorasPorCategoria[categoria] + horasAproveitadasFinais > 90) {
         alert(`Limite máximo de 90 horas para a categoria ${categoria} foi atingido.`);
         return;
     }
 
-    totalHorasPorCategoria[categoria] += horasAproveitadas;
+    totalHorasPorCategoria[categoria] += horasAproveitadasFinais;
+    totalHorasPorTipoAtividade[categoria][tipoAtividade] += horasAproveitadasFinais;
 
     // Adiciona atividade à lista
-    atividadesAdicionadas.push({
+    const atividadeAdicionada = {
         descricao,
         categoria,
         tipoAtividade,
         horasDedicadas,
-        horasAproveitadas
-    });
+        horasAproveitadas: horasAproveitadasFinais
+    };
 
     // Exibe resumo
     exibirResumo();
@@ -129,11 +148,17 @@ function exibirResumo() {
     const resumoDiv = document.getElementById('resumo');
     resumoDiv.innerHTML = '';
 
-    atividadesAdicionadas.forEach(atividade => {
-        const p = document.createElement('p');
-        p.textContent = `${atividade.descricao} (${atividade.tipoAtividade}): ${atividade.horasAproveitadas.toFixed(2)} horas aproveitadas`;
-        resumoDiv.appendChild(p);
-    });
+    // Exibe todas as atividades adicionadas
+    for (const categoria in totalHorasPorTipoAtividade) {
+        for (const tipoAtividade in totalHorasPorTipoAtividade[categoria]) {
+            const horas = totalHorasPorTipoAtividade[categoria][tipoAtividade];
+            if (horas > 0) {
+                const p = document.createElement('p');
+                p.textContent = `${tipoAtividade} (${categoria}): ${horas.toFixed(2)} horas aproveitadas`;
+                resumoDiv.appendChild(p);
+            }
+        }
+    }
 
     // Exibe total por categoria
     for (const [categoria, total] of Object.entries(totalHorasPorCategoria)) {
