@@ -33,4 +33,3 @@ Este sistema foi desenvolvido para uso local e não inclui banco de dados. Todos
 
 ---
 
-Desenvolvido para a disciplina de **Desenvolvimento Web** sob orientação do professor **Willyan Michel Ferreira**. 😊
