@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Horas Complementares</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Sistema de Cálculo de Horas Complementares</h1>
+
+    <!-- Formulário para inserir os dados -->
+    <form id="formulario">
+        <label for="descricao">Descrição da Atividade:</label>
+        <input type="text" id="descricao" name="descricao" placeholder="Ex: Participação em Feira" required>
+
+        <label for="categoria">Categoria Principal:</label>
+        <select id="categoria" name="categoria">
+            <option value="ensino">Ensino</option>
+            <option value="extensao">Extensão</option>
+            <option value="pesquisa">Pesquisa</option>
+        </select>
+
+        <label for="tipoAtividade">Tipo Específico da Atividade:</label>
+        <select id="tipoAtividade" name="tipoAtividade">
+            <!-- Opções serão carregadas dinamicamente via JavaScript -->
+        </select>
+
+        <label for="horasDedicadas">Total de Horas Dedicadas:</label>
+        <input type="number" id="horasDedicadas" name="horasDedicadas" placeholder="Ex: 10" required>
+
+        <button type="button" onclick="adicionarAtividade()">Adicionar Atividade</button>
+    </form>
+
+    <!-- Resultados -->
+    <div id="resultados">
+        <h2>Resultados</h2>
+        <div id="resumo"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
